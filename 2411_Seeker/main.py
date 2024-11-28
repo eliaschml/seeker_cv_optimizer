@@ -3,18 +3,17 @@ import contents
 import functions
 import os
 import json
-import simulators
 import datetime as dt
 import pytz
 
-UPLOAD_FOLDER = './2411_Seeker/temp_uploads'
+UPLOAD_FOLDER = './temp_uploads'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
     print(UPLOAD_FOLDER)
 
 app,rt = fh.fast_app(
     live=True
-    ,hdrs=(fh.Link(rel="icon", type='assets/x-icon', href=r'.\2411_Seeker\assets\favicon-32x32.png'),)
+    ,hdrs=(fh.Link(rel="icon", type='assets/x-icon', href=r'.\assets\favicon-32x32.png'),)
     )
 @rt('/learn_more')
 def get(): return contents.intro
@@ -28,9 +27,9 @@ def get():
 @rt('/cv_optimizer')
 def get(session):
     if session['record_id']:
-        return fh.P(str(session['record_id'])),contents.optimize_cv_loaded
+        return contents.optimize_cv_loaded
     else:  
-        return fh.P(str(session['record_id'])),contents.optimize_cv_upload
+        return contents.optimize_cv_upload
 
 @rt('/')
 def get(session):
@@ -128,7 +127,7 @@ async def post(seekerFile:fh.UploadFile, session):
         target_record_id = json.loads(seeker_content[0]['record_dict'])['record_id']
         session['record_id']=target_record_id
         # retrieve content from db
-        target_master_cv = simulators.retrieve_record()
+        target_master_cv = json.loads(seeker_content[0]['record_dict'])['record_content']
         # clear uploaded seeker file
         if os.path.exists(temp_file_path):
             os.remove(temp_file_path)
